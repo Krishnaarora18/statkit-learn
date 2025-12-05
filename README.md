@@ -30,3 +30,8 @@ Clone the repository:
 git clone https://github.com/Krishnaarora18/statkit-learn.git
 cd statkit-learn
 ```
+## How to use?
+- import the model class.
+```python
+from statkitlearn.linear_model import RidgeRegression
+```
