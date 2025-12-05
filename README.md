@@ -33,5 +33,5 @@ cd statkit-learn
 ## How to use?
 - import the model class.
 ```python
-from statkitlearn.linear_model import RidgeRegression
+from statkitlearn.linear_model import RidgeRegressor
 ```
