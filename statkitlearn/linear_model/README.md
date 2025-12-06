@@ -123,6 +123,33 @@ $$
 - Reduces Coefficients.
 - Reduces Variance.
 
+### **_LassoRegressor_**
+
+**Lasso Regressor** implement the L1 regularized linear regression, which prevents overfitting by feature selection and reduces the weights of unnecessary features
+**Objective** - The Prediction model is
+
+$$
+\hat{y} = X\theta
+$$
+
+**Lasso loss function**- Lasso adds L1 penalty on the MSE loss function.
+
+$$
+J(\theta) = \frac{1}{2m}\sum_{i=1}^{m} (X^{(i)}\theta - y^{(i)})^2 + \alpha ||w||
+$$
+
+- where $||w||$ is the weights matrix.
+
+**Effect of Regularization**<br>
+The penalty term
+
+$$
+\alpha ||w||
+$$
+
+- Reduces weights of unnecessary features to 0
+- Reduces variance
+
 ## How to Use?
 
 ### 1). Linear Regression(GDRegressor)
@@ -131,7 +158,7 @@ $$
 from statkitlearn.linear_model import GDRegressor #Import the GDRegressor Class
 gdr = GDRegressor() ##Make an object
 gdr.fit(X_train,y_train) ##fit the training data
-print(gdr.coef_,gdr.intercept_) ##Print the coefficients and intercept
+print(gdr.weights,gdr.bias) ##Print the coefficients and intercept
 y_pred = gdr.predict(X_test) ## Get the predictions for test data
 ```
 
@@ -143,7 +170,7 @@ y_pred = gdr.predict(X_test) ## Get the predictions for test data
 from statkitlearn.linear_model import SGDRegressor #Import the SGDRegressor Class
 sgdr = SGDRegressor() ##Make an object
 sgdr.fit(X_train,y_train) ##fit the training data
-print(sgdr.coef_,sgdr.intercept_) ##Print the coefficients and intercept
+print(sgdr.weights,sgdr.bias) ##Print the coefficients and intercept
 y_pred = sgdr.predict(X_test) ## Get the predictions for test data
 ```
 
@@ -155,6 +182,16 @@ y_pred = sgdr.predict(X_test) ## Get the predictions for test data
 from statkitlearn.linear_model import RidgeRegressor #Import the RidgeRegressor Class
 rr = RidgeRegressor() ##Make an object
 rr.fit(X_train,y_train) ##fit the training data
-print(rr.coef_,rr.intercept_) ##Print the coefficients and intercept
+print(rr.weights,rr.bias) ##Print the coefficients and intercept
 y_pred = rr.predict(X_test) ## Get the predictions for test data
+```
+
+### 4). Lasso Regression
+
+```python
+from statkitlearn.linear_model import LassoRegressor #Import the RidgeRegressor Class
+lr = LassoRegressor() ##Make an object
+lr.fit(X_train,y_train) ##fit the training data
+print(lr.weights,lr.bias) ##Print the coefficients and intercept
+y_pred = lr.predict(X_test) ## Get the predictions for test data
 ```
