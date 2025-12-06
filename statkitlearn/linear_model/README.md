@@ -131,7 +131,7 @@ $$
 from statkitlearn.linear_model import GDRegressor #Import the GDRegressor Class
 gdr = GDRegressor() ##Make an object
 gdr.fit(X_train,y_train) ##fit the training data
-print(gdr.coef_,gdr.intercept_) ##Print the coefficients and intercept
+print(gdr.weights,gdr.bias) ##Print the weights and bias
 y_pred = gdr.predict(X_test) ## Get the predictions for test data
 ```
 
@@ -143,7 +143,7 @@ y_pred = gdr.predict(X_test) ## Get the predictions for test data
 from statkitlearn.linear_model import SGDRegressor #Import the SGDRegressor Class
 sgdr = SGDRegressor() ##Make an object
 sgdr.fit(X_train,y_train) ##fit the training data
-print(sgdr.coef_,sgdr.intercept_) ##Print the coefficients and intercept
+print(sgdr.weights,sgdr.bias) ##Print the weights and bias 
 y_pred = sgdr.predict(X_test) ## Get the predictions for test data
 ```
 
@@ -155,6 +155,6 @@ y_pred = sgdr.predict(X_test) ## Get the predictions for test data
 from statkitlearn.linear_model import RidgeRegressor #Import the RidgeRegressor Class
 rr = RidgeRegressor() ##Make an object
 rr.fit(X_train,y_train) ##fit the training data
-print(rr.coef_,rr.intercept_) ##Print the coefficients and intercept
+print(rr.weights,rr.bias) ##Print the weights and bias
 y_pred = rr.predict(X_test) ## Get the predictions for test data
 ```
