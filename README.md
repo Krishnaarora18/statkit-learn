@@ -12,6 +12,7 @@
 - GDRegressor
 - SGDRegressor
 - RidgeRegressor
+- LassoRegressor
 
 More Models will be added as soon as i learn them
 
