@@ -17,10 +17,10 @@ class GDRegressor:
 
     Attributes
     ----------
-    coef_ : ndarray of shape (n_features,)
-        Learned model coefficients.
+    weights : ndarray of shape (n_features,)
+        Learned model weights(coefficients).
 
-    intercept_ : float
+    bias : float
         Learned bias term.
 
     loss_history_ : list of float
@@ -36,8 +36,8 @@ class GDRegressor:
     def __init__(self, learning_rate=0.1, epochs=100):
         self.epochs = epochs
         self.lr = learning_rate
-        self.coef_ = None
-        self.intercept_ = None
+        self.weights = None
+        self.bias = None
         self.loss_history_ = []   # Added
 
     def fit(self, X_train, y_train):
@@ -57,24 +57,24 @@ class GDRegressor:
         self : object
             Returns the fitted estimator.
         """
-        self.intercept_ = 0
-        self.coef_ = np.ones(X_train.shape[1])
+        self.weights = 0
+        self.bias = np.ones(X_train.shape[1])
 
         for i in range(self.epochs):
-            y_hat = np.dot(X_train, self.coef_) + self.intercept_
+            y_hat = np.dot(X_train, self.weights) + self.bias
 
             # compute and store loss (MSE)
             loss = np.mean((y_train - y_hat) ** 2)
             self.loss_history_.append(loss)
 
             # gradients
-            intercept_der = -2 * np.mean(y_train - y_hat)
-            self.intercept_ = self.intercept_ - (self.lr * intercept_der)
+            db = -2 * np.mean(y_train - y_hat)
+            self.bias = self.bias - (self.lr * db)
 
-            coef_der = -2 * np.dot((y_train - y_hat), X_train) / X_train.shape[0]
-            self.coef_ = self.coef_ - (self.lr * coef_der)
+            dw = -2 * np.dot((y_train - y_hat), X_train) / X_train.shape[0]
+            self.weights = self.weights - (self.lr * dw)
 
-        print(self.intercept_, self.coef_)
+        print(self.bias, self.weights)
 
         return self
 
@@ -92,5 +92,5 @@ class GDRegressor:
         y_pred : ndarray of shape (n_samples,)
             Predicted target values.
         """
-        return np.dot(X_test, self.coef_) + self.intercept_
+        return np.dot(X_test, self.weights) + self.bias
 

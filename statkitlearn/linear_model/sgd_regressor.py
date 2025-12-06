@@ -19,10 +19,10 @@ class SGDRegressor:
 
     Attributes
     ----------
-    coef_ : ndarray of shape (n_features,)
+    weights : ndarray of shape (n_features,)
         Weight vector learned by the model.
 
-    intercept_ : float
+    bias : float
         Bias term.
 
     loss_history_ : list of float
@@ -38,8 +38,8 @@ class SGDRegressor:
     def __init__(self, learning_rate=0.1, epochs=100):
         self.lr = learning_rate
         self.epochs = epochs
-        self.coef_ = None
-        self.intercept_ = None
+        self.weights = None
+        self.bias = None
         self.loss_history_ = []  # Added
 
     def fit(self, X_train, y_train):
@@ -59,31 +59,31 @@ class SGDRegressor:
         self : object
             Returns the fitted estimator.
         """
-        self.intercept_ = 0
-        self.coef_ = np.ones(X_train.shape[1])
+        self.bias = 0
+        self.weights = np.ones(X_train.shape[1])
 
         for i in range(self.epochs):
             epoch_losses = []
             idx = np.random.permutation(X_train.shape[0])
 
             for j in idx:
-                y_hat = np.dot(X_train[j], self.coef_) + self.intercept_
+                y_hat = np.dot(X_train[j], self.weights) + self.bias
 
                 # compute loss for this sample
                 loss = (y_train[j] - y_hat) ** 2
                 epoch_losses.append(loss)
 
                 # gradients
-                intercept_derivative = -2 * (y_train[j] - y_hat)
-                self.intercept_ = self.intercept_ - (self.lr * intercept_derivative)
+                db = -2 * (y_train[j] - y_hat)
+                self.bias = self.bias - (self.lr * db)
 
-                coef_der = -2 * np.dot((y_train[j] - y_hat), X_train[j])
-                self.coef_ = self.coef_ - (self.lr * coef_der)
+                dw = -2 * np.dot((y_train[j] - y_hat), X_train[j])
+                self.weights = self.weights - (self.lr * dw)
 
             # store average epoch loss
             self.loss_history_.append(np.mean(epoch_losses))
 
-        print(self.intercept_, self.coef_)
+        print(self.weights, self.bias)
         return self
 
     def predict(self, X_test):
@@ -99,4 +99,4 @@ class SGDRegressor:
         y_pred : ndarray of shape (n_samples,)
             Predicted values.
         """
-        return np.dot(X_test, self.coef_) + self.intercept_
+        return np.dot(X_test, self.weights) + self.bias
