@@ -36,3 +36,5 @@ cd statkit-learn
 ```python
 from statkitlearn.linear_model import RidgeRegressor
 ```
+- more explaination about how to use each class is inside the particular module's README.md file
+- for example:- GDRegressor usage guide is available in the README file of linear_model module
