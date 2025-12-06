@@ -21,10 +21,10 @@ class RidgeRegressor:
 
     Attributes
     ----------
-    coef_ : ndarray of shape (n_features,)
+    weights : ndarray of shape (n_features,)
         Estimated coefficients for the linear regression problem.
 
-    intercept_ : float
+    bias : float
         Independent term (bias) in the model.
 
     Notes
@@ -36,8 +36,8 @@ class RidgeRegressor:
 
     def __init__(self,alpha=3):
         self.alpha = alpha
-        self.coef_=None
-        self.intercept_ =None
+        self.weights=None
+        self.bias =None
     def fit(self,X_train,y_train):
         """
     Fit Ridge Regression model.
@@ -57,10 +57,10 @@ class RidgeRegressor:
     """
         X_train = np.insert(X_train, 0, 1,axis=1)
         I = np.identity(X_train.shape[1])
-        I[0][0] = 0
-        weights = np.linalg.inv(np.dot(X_train.T,X_train) + self.alpha*I).dot(X_train.T).dot(y_train)
-        self.intercept_ = weights[0]
-        self.coef_ = weights[1:]
+        I[0][0] = 0 ## To not regularise the bias term
+        result = np.linalg.inv(np.dot(X_train.T,X_train) + self.alpha*I).dot(X_train.T).dot(y_train)
+        self.bias = result[0]
+        self.weights = result[1:]
 
     def predict(self,X_test):
         """
@@ -76,26 +76,4 @@ class RidgeRegressor:
     y_pred : ndarray of shape (n_samples,)
         Predicted values.
     """
-        return np.dot(X_test,self.coef_) + self.intercept_
-    
-    def score(self,X_test,y_test):
-        """
-    Compute R².
-
-    Parameters
-    ----------
-    X_test : ndarray of shape (n_samples, n_features)
-        Test samples.
-
-    y_test : ndarray of shape (n_samples,) or (n_samples, 1)
-        True labels.
-
-    Returns
-    -------
-    score : float
-        R² score between 0 and 1. Higher is better.
-    """
-        y_pred = self.predict(X_test)
-        residual = y_test - y_pred
-        ssr = np.sum(residual**2)
-        return 1 - (ssr / np.sum((y_test - np.mean(y_test))**2))
+        return np.dot(X_test,self.weights) + self.bias
