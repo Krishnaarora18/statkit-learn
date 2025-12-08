@@ -12,6 +12,7 @@
 - GDRegressor
 - SGDRegressor
 - RidgeRegressor
+- LassoRegressor
 
 **Preprocessing**
 
@@ -44,3 +45,5 @@ cd statkit-learn
 from statkitlearn.linear_model import RidgeRegressor
 from statkitlearn.preprocessing import StandardScaler
 ```
+- more explaination about how to use each class is inside the particular module's README.md file
+- for example:- GDRegressor usage guide is available in the README file of linear_model module
