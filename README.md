@@ -13,6 +13,11 @@
 - SGDRegressor
 - RidgeRegressor
 
+**Preprocessing**
+
+- OutliersRemover
+- StandardScaler
+
 More Models will be added as soon as i learn them
 
 ## Features
@@ -30,8 +35,12 @@ Clone the repository:
 git clone https://github.com/Krishnaarora18/statkit-learn.git
 cd statkit-learn
 ```
+
 ## How to use?
+
 - import the model class.
+
 ```python
 from statkitlearn.linear_model import RidgeRegressor
+from statkitlearn.preprocessing import StandardScaler
 ```
