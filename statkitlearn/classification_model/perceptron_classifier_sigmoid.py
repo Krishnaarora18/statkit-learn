@@ -6,7 +6,7 @@ class PerceptronClassifierSigmoid:
     Perceptron
     ==========
     This is a simple perceptron model performing bi-class classification.
-    This model uses step function to classify points
+    This model uses sigmoid function to classify points
     =======
     Sigmoid(X)
     =======
