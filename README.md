@@ -19,6 +19,11 @@
 - OutliersRemover
 - StandardScaler
 
+**Classification Algorithms**
+
+- PerceptronClassifier
+- PerceptronClassifierSigmoid
+
 More Models will be added as soon as i learn them
 
 ## Features
@@ -44,6 +49,8 @@ cd statkit-learn
 ```python
 from statkitlearn.linear_model import RidgeRegressor
 from statkitlearn.preprocessing import StandardScaler
+from statkitlearn.classification_model import PerceptronClassifier
 ```
+
 - more explaination about how to use each class is inside the particular module's README.md file
 - for example:- GDRegressor usage guide is available in the README file of linear_model module
