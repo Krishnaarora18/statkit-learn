@@ -23,6 +23,7 @@
 
 - PerceptronClassifier
 - PerceptronClassifierSigmoid
+- LogisticRegression
 
 More Models will be added as soon as i learn them
 
