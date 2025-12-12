@@ -18,107 +18,107 @@ $$
 
 - **Mean Squared Error(MSE)**:-
 
-  $$
-  L = \frac{1}{2m}\sum_{i=1}^{m}(y_{\text{i}} - \hat{y_{\text{i}}})^2
-  $$
+$$
+L = \frac{1}{2m}\sum_{i=1}^{m}(y_{\text{i}} - \hat{y_{\text{i}}})^2
+$$
 
-  **Advantages** -
+**Advantages** -
 
-  - Easiest to compute, smooth gradient
-  - Convex function
-  - Highly sensitive to small deviations, so model fits tightly
+- Easiest to compute, smooth gradient
+- Convex function
+- Highly sensitive to small deviations, so model fits tightly
 
-  **Disadvantages**
+**Disadvantages**
 
-  - Extremely sensitive to outliers
-  - Not robust in real-world data
+- Extremely sensitive to outliers
+- Not robust in real-world data
 
-  **Gradient**-
+**Gradient**-
 
-  $$
-  \nabla_{\hat{y}}L = -\frac{1}{m}\sum_{i=1}^{m}(y_{i}- \hat{y_{i}})
-  $$
+$$
+\nabla_{\hat{y}}L = -\frac{1}{m}\sum_{i=1}^{m}(y_{i}- \hat{y_{i}})
+$$
 
-  in matrix form:-
+in matrix form:-
 
-  $$
-  \nabla_{\hat{y}}L = \frac{1}{m}(y - \hat{y})
-  $$
+$$
+\nabla_{\hat{y}}L = \frac{1}{m}(y - \hat{y})
+$$
 
 - **Pseudo Huber Loss**
 
-  $$
-  L = \frac{1}{m}\sum_{i=1}^{m}(\delta^2(\sqrt{1 + (\frac{y_{i}-\hat{y_{i}}}{\delta})^2} -1))
-  $$
+$$
+L = \frac{1}{m}\sum_{i=1}^{m}(\delta^2(\sqrt{1 + (\frac{y_{i}-\hat{y_{i}}}{\delta})^2} -1))
+$$
 
-  **Advantages**:-
+**Advantages**:-
 
-  - Smooth version of Huber loss (unlike Huber, no kink)
-  - Behaves like MSE for small errors -> fast convergence
-  - Behaves like MAE for large errors -> robust to outliers
-  - Gradient does not explode like MSE
+- Smooth version of Huber loss (unlike Huber, no kink)
+- Behaves like MSE for small errors -> fast convergence
+- Behaves like MAE for large errors -> robust to outliers
+- Gradient does not explode like MSE
 
-  **Disadvantages**:-
+**Disadvantages**:-
 
-  - Requires choosing delta
-  - Slightly more expensive computationally
+- Requires choosing delta
+- Slightly more expensive computationally
 
-  **Gradient**:-
+**Gradient**:-
 
-  $$
-  Let, error = y - \hat{y}
-  $$
+$$
+Let, error = y - \hat{y}
+$$
 
-  $$
-  \therefore \nabla_{\hat{y}}L = \frac{error}{\sqrt{1 + (\frac{error}{\delta})^2}}
-  $$
+$$
+\therefore \nabla_{\hat{y}}L = \frac{error}{\sqrt{1 + (\frac{error}{\delta})^2}}
+$$
 
 - **Log Cosh Loss**
 
-  $$
-  L(w) = \frac{1}{m}\sum_{i=1}^{m}log(cosh(y_{i} - \hat{y_{i}}))
-  $$
+$$
+L(w) = \frac{1}{m}\sum_{i=1}^{m}log(cosh(y_{i} - \hat{y_{i}}))
+$$
 
-  $$
+$$
   where, cosh(x) = \frac{e^x + e^{-x}}{2}
-  $$
+$$
 
-  **Advantages**
+**Advantages**
 
-  - Very smooth loss (smoother than pseudo-Huber)
-  - Robust to outliers like MAE.
-  - Behaves like MSE near zero.
-  - No hyperparameter (unlike Pseudo-Huber’s $\delta$)
+- Very smooth loss (smoother than pseudo-Huber)
+- Robust to outliers like MAE.
+- Behaves like MSE near zero.
+- No hyperparameter (unlike Pseudo-Huber’s $\delta$)
 
-  **Disadvantages**
+**Disadvantages**
 
-  - Slightly slower than MSE
-  - Less interpretable (not commonly taught)
+- Slightly slower than MSE
+- Less interpretable (not commonly taught)
 
-  **Gradient**
+**Gradient**
 
-  $$
-  \nabla_{\hat{y}}L = tanh(y - \hat{y})
-  $$
+$$
+\nabla_{\hat{y}}L = tanh(y - \hat{y})
+$$
 
-  $$
-  where, tanh(x) = \frac{e^x - e^{-x}}{e^x + e^{-x}}
-  $$
+$$
+where, tanh(x) = \frac{e^x - e^{-x}}{e^x + e^{-x}}
+$$
 
 **Regularisation**:-
 To overcome the problem of overfitting the **GDRegressor** have 3 regularisation techniques
 
 - **L1 Regularisation**- In this we add a penalty term $\alpha||w||$ due to which the coefficients of unwanted columns shrinks to 0
 
-  $$
-  L_{new} = L_{old} + \alpha||w||
-  $$
+$$
+L_{new} = L_{old} + \alpha||w||
+$$
 
 - **L2 Regularisation**- we add a penalty term $\alpha||w||^2$. due to which the coefficients of unwanted columns start shrinking but unlike L1 regularisation the coefficients does not shrink to 0
 
-  $$
-  L_{new} = L_{old} + \alpha||w||^2
-  $$
+$$
+L_{new} = L_{old} + \alpha||w||^2
+$$
 
 - **ElasticNet Reguralisation**- It is a mix of both L1 and L2 regularisation, it is less robust then L1 regularisation and more robust then L2 Regularisation.
   $$
@@ -146,7 +146,7 @@ To overcome the problem of overfitting the **GDRegressor** have 3 regularisation
   $$
   i.e.
   $$
-   \frac{\partial L}{\partial w} = X^T\cdot\frac{\partial L}{\partial \hat{y}}
+  \frac{\partial L}{\partial w} = X^T\cdot\frac{\partial L}{\partial \hat{y}}
   $$
 - Add the gradient of penalty term if choosen
   $$
@@ -339,4 +339,3 @@ print(rr.weights,rr.bias) ##Print the coefficients and intercept
 print(rr.weights,rr.bias) ##Print the weights and bias
 y_pred = rr.predict(X_test) ## Get the predictions for test data
 ```
-
