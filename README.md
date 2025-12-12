@@ -12,7 +12,6 @@
 - GDRegressor
 - SGDRegressor
 - RidgeRegressor
-- LassoRegressor
 
 **Preprocessing**
 
