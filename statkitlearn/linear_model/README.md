@@ -129,34 +129,47 @@ $$
 
 - Initialises the weights to be 0 then,
 - Compute the predictions
-  $$
-  \hat{y} = Xw
-  $$
+
+$$
+\hat{y} = Xw
+$$
+
 - Compute the error
-  $$
-  error = y - \hat{y}
-  $$
+
+$$
+error = y - \hat{y}
+$$
+
 - Compute the Gradient of the choosen Loss Function wrt $\hat{y}$
-  $$
-  calculate, \nabla_{\hat{y}}L
-  $$
+
+$$
+calculate, \nabla_{\hat{y}}L
+$$
+
 - Compute Gradient wrt $w$ by chain rule
-  $$
-  \frac{\partial L}{\partial w} = \frac{\partial L}{\partial \hat{y}}\cdot\frac{\partial \hat{y}}{\partial w}
-  $$
-  i.e.
-  $$
-  \frac{\partial L}{\partial w} = X^T\cdot\frac{\partial L}{\partial \hat{y}}
-  $$
+
+$$
+\frac{\partial L}{\partial w} = \frac{\partial L}{\partial \hat{y}}\cdot\frac{\partial \hat{y}}{\partial w}
+$$
+
+i.e.
+
+$$
+\frac{\partial L}{\partial w} = X^T\cdot\frac{\partial L}{\partial \hat{y}}
+$$
+
 - Add the gradient of penalty term if choosen
-  $$
-  \frac{\partial L}{\partial w} = \frac{\partial L}{\partial w}+\nabla_{w}penalty
-  $$
+
+$$
+\frac{\partial L}{\partial w} = \frac{\partial L}{\partial w}+\nabla_{w}penalty
+$$
+
 - Calculate and save loss
 - Update weights
-  $$
-  w := w - \eta\cdot\frac{\partial L}{\partial w}
-  $$
+
+$$
+w := w - \eta\cdot\frac{\partial L}{\partial w}
+$$
 
 ---
 
