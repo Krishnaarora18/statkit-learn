@@ -156,7 +156,7 @@ $$
 i.e.
 
 $$
-\frac{\partial L}{\partial w} = X^T\cdot\frac{\partial L}{\partial \hat{y}}
+\frac{\partial L}{\partial w} = -X^T\cdot\frac{\partial L}{\partial \hat{y}}
 $$
 
 - Add the gradient of penalty term if choosen
