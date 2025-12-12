@@ -121,9 +121,10 @@ L_{new} = L_{old} + \alpha||w||^2
 $$
 
 - **ElasticNet Reguralisation**- It is a mix of both L1 and L2 regularisation, it is less robust then L1 regularisation and more robust then L2 Regularisation.
-  $$
-  L_{new} = L_{old} +\lambda(\alpha|w| + (1-\alpha)w^2)
-  $$
+
+$$
+L_{new} = L_{old} +\lambda(\alpha|w| + (1-\alpha)w^2)
+$$
 
 **_Algorithm_**
 
@@ -181,45 +182,30 @@ Instead of using all samples to compute the gradient (like GD), it uses one samp
 **Objective** - The Prediction model is
 
 $$
-
 \hat{y} = X\theta
-
-
 $$
 
 **Loss Function(MSE)** - Same mean squared error loss
 
 $$
-
 J(\theta) = \frac{1}{2m}\sum_{i=1}^{m} (X^{(i)}\theta - y^{(i)})^2
-
-
 $$
 
 **Stochastic Gradient** -
 For a single training sample ( 𝑥(𝑖), 𝑦(𝑖) ), the gradient of the loss is:
 
 $$
-
 g^{(i)} = x^{(i)T}(x^{(i)}\theta - y^{(i)})
-
-
 $$
 
 **SGD Update Rule** - Each iteration updates parameters using only one data point:
 
 $$
-
 \theta := \theta - \eta \cdot g^{(i)}
-
-
 $$
 
 $$
-
 \theta := \theta - \eta \cdot x^{(i)T}(x^{(i)}\theta - y^{(i)})
-
-
 $$
 
 **Hyper-Parameters**:-
@@ -235,19 +221,13 @@ $$
 **Objective** - The Prediction model is
 
 $$
-
 \hat{y} = X\theta
-
-
 $$
 
 **Ridge Loss Function** - Ridge adds an **L2 penalty** to the MSE loss:
 
 $$
-
 J(\theta) = \frac{1}{2m}(y - X\theta)^T(y - X\theta) + \frac{\alpha}{2m}\theta^T\theta
-
-
 $$
 
 where
@@ -257,10 +237,7 @@ where
 **Closed Form Solution** - Ridge regression has a closed-form solution:
 
 $$
-
 \theta\_{\text{ridge}} = (X^{T}X + \alpha I)^{-1} X^{T}y
-
-
 $$
 
 where
@@ -271,10 +248,7 @@ where
 The penalty term
 
 $$
-
 \frac{\alpha}{2m}\theta^T\theta
-
-
 $$
 
 - Reduces Coefficients.
@@ -286,19 +260,13 @@ $$
 **Objective** - The Prediction model is
 
 $$
-
 \hat{y} = X\theta
-
-
 $$
 
 **Lasso loss function**- Lasso adds L1 penalty on the MSE loss function.
 
 $$
-
 J(\theta) = \frac{1}{2m}\sum_{i=1}^{m} (X^{(i)}\theta - y^{(i)})^2 + \alpha ||w||
-
-
 $$
 
 - where $||w||$ is the weights matrix.
@@ -307,10 +275,7 @@ $$
 The penalty term
 
 $$
-
 \alpha ||w||
-
-
 $$
 
 - Reduces weights of unnecessary features to 0
