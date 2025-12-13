@@ -254,32 +254,6 @@ $$
 - Reduces Coefficients.
 - Reduces Variance.
 
-### **_LassoRegressor_**
-
-**Lasso Regressor** implement the L1 regularized linear regression, which prevents overfitting by feature selection and reduces the weights of unnecessary features
-**Objective** - The Prediction model is
-
-$$
-\hat{y} = X\theta
-$$
-
-**Lasso loss function**- Lasso adds L1 penalty on the MSE loss function.
-
-$$
-J(\theta) = \frac{1}{2m}\sum_{i=1}^{m} (X^{(i)}\theta - y^{(i)})^2 + \alpha ||w||
-$$
-
-- where $||w||$ is the weights matrix.
-
-**Effect of Regularization**<br>
-The penalty term
-
-$$
-\alpha ||w||
-$$
-
-- Reduces weights of unnecessary features to 0
-- Reduces variance
 
 ## How to Use?
 
