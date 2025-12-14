@@ -20,12 +20,12 @@ class KNNRegressor:
         - "minowski"
         - "cosine"
 
-    p : int or float, default=0
+    p : int or float, default=1
         Power parameter for Minkowski distance.
         Must be greater than 0 when using Minkowski distance.
     """
 
-    def __init__(self, k=5, distance_type="euclidean", p=0):
+    def __init__(self, k=5, distance_type="euclidean", p=1):
         """
         Initialize the KNN regressor with hyperparameters.
         """
@@ -34,6 +34,39 @@ class KNNRegressor:
         self.train_labels = None
         self.p = p
         self.distance_type = distance_type
+        if self.distance_type not in {"minowski","cosine","manhattan","euclidean"}:
+            raise ValueError("Invalid Distance Type")
+        if not isinstance(self.p, (int,float)) or self.p <= 0:
+            raise ValueError("p must be a positive real number")
+
+    def validate_X(self, X):
+        X = np.asarray(X)
+        if X.ndim == 1:
+            X = X.reshape(-1, 1)
+        elif X.ndim != 2:
+            raise ValueError(f"Expected 2D array, got {X.ndim}D array")
+        return X
+    
+    def validate_fit(self, X_train,y_train):
+        X_train = self.validate_X(X_train)
+        y_train = np.asarray(y_train)
+        if y_train.ndim != 1:
+            raise ValueError(f"y_train must be 1D array got {y_train.ndim}D instead")
+
+        if X_train.shape[0] != y_train.shape[0]:
+            raise ValueError(f"Number of samples in X_train and y_train must be same")
+        
+        if not np.all(np.isfinite(X_train)):
+            raise ValueError("X_train contains NaN or infinite values")
+
+        if not np.all(np.isfinite(y_train)):
+            raise ValueError("y_train contains NaN or infinite values")
+        
+        if not np.issubdtype(y_train.dtype, np.number):
+            raise ValueError("y_train must be numeric for regression")
+        
+        return X_train, y_train
+        
 
     def distance(self, X_train, X_test):
         """
@@ -63,14 +96,10 @@ class KNNRegressor:
         elif self.distance_type == "manhattan":
             return np.sum(np.abs(X_train - X_test))
         elif self.distance_type == "minowski":
-            if self.p <= 0:
-                raise ValueError("Value of p must be greater then 0")
             return np.pow(np.sum(np.abs(X_train - X_test) ** self.p), (1 / self.p))
         elif self.distance_type == "cosine":
             return (1 - np.dot(X_train, X_test) /
                     (np.sqrt(np.sum(X_train ** 2)) * np.sqrt(np.sum(X_test ** 2))))
-        else:
-            raise ValueError("Unknown distance metric")
 
     def fit(self, X_train, y_train):
         """
@@ -84,6 +113,7 @@ class KNNRegressor:
         y_train : numpy.ndarray
             Target values of shape (n_samples,).
         """
+        X_train, y_train = self.validate_fit(X_train, y_train)
         self.train_points = X_train
         self.train_labels = y_train
 
@@ -105,6 +135,11 @@ class KNNRegressor:
         numpy.ndarray
             Predicted continuous values for each test sample.
         """
+
+        if self.train_points is None:
+            raise ValueError("Model not fitted. Call fit() first.")
+    
+        X_test = self.validate_X(X_test)
         preds = []
         for i in range(X_test.shape[0]):
             distances = []
@@ -112,7 +147,7 @@ class KNNRegressor:
                 distance = self.distance(self.train_points[j], X_test[i])
                 distances.append([distance, self.train_labels[j]])
 
-            sorted_distances = sorted(distance, key=lambda x: x[0])[:self.k]
+            sorted_distances = sorted(distances, key=lambda x: x[0])[:self.k]
             values = np.array([value[1] for value in sorted_distances])
             dist = np.array([distance[0] for distance in sorted_distances])
             weights = np.exp(-dist)

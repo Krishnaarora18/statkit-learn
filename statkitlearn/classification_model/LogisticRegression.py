@@ -15,28 +15,26 @@ class LogisticRegression:
     epochs : int, default=1000
         Number of full gradient descent iterations.
 
+    probability_threshold : float default = 0.5
+        the pobabilty after which model will predict 1.
+
     Attributes
     ----------
     weights : ndarray of shape (n_features+1,)
         Learned model weights.
 
-    coef_ : ndarray of shape (n_features,)
-            Learned model coefficients
-
-    intercept_ : Scaler number
-                 Learned model bias
+    bias : Scaler number
+        Learned model bias
     Notes
     -----
     - Uses gradient descent; gradient is computed on all samples.
     - Convergence depends strongly on learning rate and number of epochs.
     - Intended for educational use; not as efficient as sklearn's LogisticRegression.
     """
-    def __init__(self,learning_rate=.1,epochs = 1000):
+    def __init__(self,learning_rate=.1,epochs = 1000, probablity_threshold = 0.5):
         self.lr  = learning_rate
         self.epochs = epochs
         self.weights = None
-        self.coef_ = None
-        self.intercept_ = None
 
     def sigmoid(self,X):
         """
@@ -46,6 +44,38 @@ class LogisticRegression:
 
         """
         return 1/(1 + np.exp(-X))
+    
+    def validate_X(self, X):
+        X = np.asarray(X)
+        if X.ndim == 1:
+            X = X.reshape(-1, 1)
+        elif X.ndim != 2:
+            raise ValueError(f"Expected 2D array, got {X.ndim}D array")
+        return X
+    
+    def validate_fit(self, X_train,y_train):
+        X_train = self.validate_X(X_train)
+        y_train = np.asarray(y_train)
+        if y_train.ndim != 1:
+            raise ValueError(f"y_train must be 1D array got {y_train.ndim}D instead")
+
+        if X_train.shape[0] != y_train.shape[0]:
+            raise ValueError(f"Number of samples in X_train and y_train must be same")
+        
+        if not isinstance(self.lr, (int,float)) or self.lr <= 0:
+            raise ValueError("Learning rate must be a positive real number")
+        
+        if not isinstance(self.epochs, int) or self.epochs <= 0:
+            raise ValueError("Epochs must be a positive integer")
+        
+        if not np.all(np.isfinite(X_train)):
+            raise ValueError("X_train contains NaN or infinite values")
+
+        if not np.all(np.isfinite(y_train)):
+            raise ValueError("y_train contains NaN or infinite values")
+        
+        if not np.issubdtype(y_train.dtype, np.number):
+            raise ValueError("y_train must be numeric for regression")
     
     def fit(self,X,y):
         """
@@ -64,7 +94,8 @@ class LogisticRegression:
         self : object
             Returns the fitted estimator.
         """
-        X = np.insert(X, 0, 1, axis = 1)
+        X_train, y_train = self.validate_fit(X_train, y_train)
+        self.bias = 0
         self.weights = np.zeros(X.shape[1])
         for i in range(self.epochs):
             y_pred = self.sigmoid(np.dot(X,self.weights))
@@ -74,8 +105,6 @@ class LogisticRegression:
 
             ## Update weights
             self.weights -= self.lr*dw
-        self.coef_ = self.weights[1:]
-        self.intercept_ = self.weights[0]
         return self
     
     def predict(self,X):
@@ -92,6 +121,5 @@ class LogisticRegression:
         y_pred : ndarray of shape (n_samples,)
             Predicted target values.
         """
-        X = np.insert(X, 0, 1, axis = 1)
-        preds =  self.sigmoid(np.dot(X,self.weights))
+        preds =  self.sigmoid(np.dot(X,self.weights) + self.bias)
         return np.where(preds > 0.5, 1,0)

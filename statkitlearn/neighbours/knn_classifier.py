@@ -31,6 +31,10 @@ class KNNClassifier:
         self.train_labels = None
         self.p = p
         self.distance_type = distance_type
+        if self.distance_type not in {"minowski","cosine","manhattan","euclidean"}:
+            raise ValueError("Invalid Distance Type")
+        if not isinstance(self.p, (int,float)) or self.p <= 0:
+            raise ValueError("p must be a positive real number")
 
     def distance(self, X_train, X_test):
         """
@@ -68,6 +72,32 @@ class KNNClassifier:
                     (np.sqrt(np.sum(X_train ** 2)) * np.sqrt(np.sum(X_test ** 2))))
         else:
             raise ValueError("Unknown Distance metric")
+        
+    def validate_X(self, X):
+        X = np.asarray(X)
+        if X.ndim == 1:
+            X = X.reshape(-1, 1)
+        elif X.ndim != 2:
+            raise ValueError(f"Expected 2D array, got {X.ndim}D array")
+        return X
+    
+    def validate_fit(self, X_train,y_train):
+        X_train = self.validate_X(X_train)
+        y_train = np.asarray(y_train)
+        if y_train.ndim != 1:
+            raise ValueError(f"y_train must be 1D array got {y_train.ndim}D instead")
+
+        if X_train.shape[0] != y_train.shape[0]:
+            raise ValueError(f"Number of samples in X_train and y_train must be same")
+        
+        if not np.all(np.isfinite(X_train)):
+            raise ValueError("X_train contains NaN or infinite values")
+
+        if not np.all(np.isfinite(y_train)):
+            raise ValueError("y_train contains NaN or infinite values")
+        
+        
+        return X_train, y_train
 
     def fit(self, X_train, y_train):
         """
@@ -86,8 +116,7 @@ class KNNClassifier:
         ValueError
             If the number of samples in X_train and y_train do not match.
         """
-        if X_train.shape[0] != y_train.shape[0]:
-            raise ValueError("Number of samples in X_train and y_train must be equal")
+        X_train, y_train = self.validate_fit(X_train,y_train)
         self.train_points = X_train
         self.train_labels = y_train
 
@@ -105,6 +134,9 @@ class KNNClassifier:
         numpy.ndarray
             Predicted class labels for each test sample.
         """
+        X_test = self.validate_X(X_test)
+        if self.train_points is None:
+            raise ValueError("Model not fitted. Call fit() first.")
         preds = []
         for i in range(X_test.shape[0]):
             distance_list = []

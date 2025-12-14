@@ -43,10 +43,8 @@ class GDRegressor:
     ----------
     weights : ndarray of shape (n_features+1,)
         Learned model weights.
-    intercept_ : Scaler number
-        Bias of the model.
-    coef_ : ndarray of shape (n_features,)
-        Learned model coefficients.
+    bias : Scaler number
+        Learned model bias
     loss_history_ : list of float
         Stores the MSE loss value for each epoch.
 
@@ -66,10 +64,57 @@ class GDRegressor:
         self.delta = delta
         self.alpha = alpha
         self.l1_ratio = l1_ratio
-        self.coef_ = None
-        self.intercept_ = None
+        self.bias = None
         self.loss = loss
         self.loss_history_ = [] 
+        self.tol = 1e-4 
+        self.n_iter_no_change = 10 
+
+
+        if self.penalty not in {None, "l1", "l2", "elasticnet"}:
+            raise ValueError("Unknown Penalty")
+        if self.loss not in {"mse","log_cosh","pseudo_huber"}:
+            raise ValueError("Unknown Loss Function")
+
+    def validate_X(self, X):
+        X = np.asarray(X)
+        if X.ndim == 1:
+            X = X.reshape(-1, 1)
+        elif X.ndim != 2:
+            raise ValueError(f"Expected 2D array, got {X.ndim}D array")
+        return X
+    
+    def validate_fit(self, X_train,y_train):
+        X_train = self.validate_X(X_train)
+        y_train = np.asarray(y_train)
+        if y_train.ndim != 1:
+            raise ValueError(f"y_train must be 1D array got {y_train.ndim}D instead")
+
+        if X_train.shape[0] != y_train.shape[0]:
+            raise ValueError(f"Number of samples in X_train and y_train must be same")
+        
+        if not isinstance(self.lr, (int,float)) or self.lr <= 0:
+            raise ValueError("Learning rate must be a positive real number")
+        
+        if not isinstance(self.epochs, int) or self.epochs <= 0:
+            raise ValueError("Epochs must be a positive integer")
+        
+        if not np.all(np.isfinite(X_train)):
+            raise ValueError("X_train contains NaN or infinite values")
+
+        if not np.all(np.isfinite(y_train)):
+            raise ValueError("y_train contains NaN or infinite values")
+        
+        if not np.issubdtype(y_train.dtype, np.number):
+            raise ValueError("y_train must be numeric for regression")
+        
+        if not isinstance(self.alpha, (int,float)) or self.alpha < 0:
+                raise ValueError("alpha must be 0 or a positive real number")
+        
+        if not isinstance(self.l1_ratio, (int,float)) or not (0 <= self.l1_ratio <= 1):
+                raise ValueError("l1_ratio must be 0 or a positive real number")
+
+        return X_train, y_train
 
     def gradient(self, error):
         """
@@ -78,11 +123,12 @@ class GDRegressor:
         if self.loss == "mse":
             return error
         elif self.loss == "pseudo_huber":
+            if not isinstance(self.delta, (int,float)) or self.delta <= 0:
+                raise ValueError("delta must be a positive real number")
             return error/np.sqrt(1 + (error/self.delta)**2)
         elif self.loss == "log_cosh":
             return np.tanh(error)
-        else:
-            raise ValueError("Unknown Loss Function")
+
         
     def mse(self,error):
         """
@@ -96,6 +142,8 @@ class GDRegressor:
         Computes the pseudo huber loss
         PHL =  δ^2(sqrt(1 + (error/ δ)^2) - 1)
         """
+        if not isinstance(self.delta, (int,float)) or self.delta <= 0:
+            raise ValueError("delta must be a positive real number")
         return np.mean(self.delta**2 * (np.sqrt(1 + (error/self.delta)**2) - 1))
     
     def log_cosh(self, error):
@@ -123,26 +171,27 @@ class GDRegressor:
             Returns the fitted estimator.
         """
         
-        X_train = np.insert(X_train, 0, 1, axis=1)
+        X_train, y_train = self.validate_fit(X_train, y_train)
+
+        self.bias = 0
         self.weights = np.zeros(X_train.shape[1])
         
-
         for i in range(self.epochs):
-            y_pred = np.dot(X_train, self.weights) ## Calculate predicted value of y
+            y_pred = np.dot(X_train, self.weights) + self.bias ## Calculate predicted value of y
             error = y_train - y_pred ## Compute error
 
             dy_pred = self.gradient(error) ## Compute Gradient of Loss function wrt y_pred
             dw = - np.dot(X_train.T, dy_pred)/X_train.shape[0] ## Compute Gradient of Loss function wrt weights
+            db = - np.mean(dy_pred)
 
             # Skip bias term
             w = self.weights.copy()
-            w[0] = 0
 
             ## Apply Penalty
             if self.penalty == None:
                 dw = dw 
             elif self.penalty == "l2":
-                dw += (2*self.alpha/X_train.shape[0])*w
+                dw += (self.alpha/X_train.shape[0])*w
             elif self.penalty == "l1":
                 dw += (self.alpha/X_train.shape[0]) * np.sign(w)
             elif self.penalty == "elasticnet":
@@ -152,22 +201,26 @@ class GDRegressor:
 
             ## Calculate Loss
             if self.loss == "mse":
-                loss = self.mse(error)  
+                loss = self.mse(error)
             elif self.loss == "pseudo_huber":
                 loss = self.pseudo_huber(error)
             elif self.loss == "log_cosh":
                 loss = self.log_cosh(error)
-            else:
-                raise ValueError("Unknown Loss Function")
 
             self.loss_history_.append(loss) ## Save the loss per epoch
 
+            if i > self.n_iter_no_change:
+                recent_losses = self.loss_history_[-self.n_iter_no_change:]
+                loss_improvement = (recent_losses[0] - recent_losses[-1]) / recent_losses[0]
+                if abs(loss_improvement) < self.tol:
+                    print(f"Converged at epoch {i}")
+                    break
+
             self.weights -= self.lr * dw ## Update weights
+            self.bias -= self.lr * db
 
 
-        self.intercept_ = self.weights[0] ## get intercept(or bias)
-        self.coef_ = self.weights[1:] ## Get coefficients
-        print(self.intercept_,self.coef_)
+        print(self.bias,self.weights)
 
         return self
 
@@ -185,5 +238,11 @@ class GDRegressor:
         y_pred : ndarray of shape (n_samples,)
             Predicted target values.
         """
-        X_test = np.insert(X_test, 0, 1, axis=1) ## insert a column of 1 at position 0
-        return np.dot(X_test, self.weights) ## Return the predictions
+        if self.weights is None:
+            raise ValueError("Model not fitted. Call fit() first.")
+        
+        X_test = self.validate_X(X_test)
+        if X_test.shape[1] != len(self.weights):
+            raise ValueError(f"X_test has {X_test.shape[1]} features, but model was trained with {len(self.weights)} features")
+
+        return np.dot(X_test, self.weights) + self.bias ## Return the predictions
