@@ -107,4 +107,8 @@ class RidgeRegressor:
     y_pred : ndarray of shape (n_samples,)
         Predicted values.
     """
+        if self.weights is None:
+            raise ValueError("Model not fitted. Call fit() first")
+        X_test = self.validate_X(X_test)
+        X_test = np.insert(X_test, 0, 1, axis =1)
         return np.dot(X_test,self.weights) + self.bias
