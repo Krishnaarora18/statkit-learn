@@ -132,7 +132,7 @@ $$
 - Compute the predictions
 
 $$
-\hat{y} = Xw
+\hat{y} = Xw + b
 $$
 
 - Compute the error
@@ -159,17 +159,35 @@ $$
 \frac{\partial L}{\partial w} = -X^T\cdot\frac{\partial L}{\partial \hat{y}}
 $$
 
+- Compute gradient wrt to $b$
+
+$$
+\frac{\partial L}{\partial b} = - \frac{1}{m}\sum_{i=1}^{m}(\frac{\partial L}{\partial \hat{y_i}})
+$$
+
 - Add the gradient of penalty term if choosen
 
 $$
+
 \frac{\partial L}{\partial w} = \frac{\partial L}{\partial w}+\nabla_{w}penalty
+
+
 $$
 
 - Calculate and save loss
 - Update weights
 
 $$
+
 w := w - \eta\cdot\frac{\partial L}{\partial w}
+
+
+$$
+
+- Update bias
+
+$$
+b := b - \eta \cdot \frac{\partial L}{\partial b}
 $$
 
 ---
@@ -182,30 +200,45 @@ Instead of using all samples to compute the gradient (like GD), it uses one samp
 **Objective** - The Prediction model is
 
 $$
+
 \hat{y} = X\theta
+
+
 $$
 
 **Loss Function(MSE)** - Same mean squared error loss
 
 $$
-J(\theta) = \frac{1}{2m}\sum_{i=1}^{m} (X^{(i)}\theta - y^{(i)})^2
+
+J(\theta) = \frac{1}{2m}\sum\_{i=1}^{m} (X^{(i)}\theta - y^{(i)})^2
+
+
 $$
 
 **Stochastic Gradient** -
 For a single training sample ( 𝑥(𝑖), 𝑦(𝑖) ), the gradient of the loss is:
 
 $$
+
 g^{(i)} = x^{(i)T}(x^{(i)}\theta - y^{(i)})
+
+
 $$
 
 **SGD Update Rule** - Each iteration updates parameters using only one data point:
 
 $$
+
 \theta := \theta - \eta \cdot g^{(i)}
+
+
 $$
 
 $$
+
 \theta := \theta - \eta \cdot x^{(i)T}(x^{(i)}\theta - y^{(i)})
+
+
 $$
 
 **Hyper-Parameters**:-
@@ -221,13 +254,19 @@ $$
 **Objective** - The Prediction model is
 
 $$
+
 \hat{y} = X\theta
+
+
 $$
 
 **Ridge Loss Function** - Ridge adds an **L2 penalty** to the MSE loss:
 
 $$
+
 J(\theta) = \frac{1}{2m}(y - X\theta)^T(y - X\theta) + \frac{\alpha}{2m}\theta^T\theta
+
+
 $$
 
 where
@@ -237,7 +276,10 @@ where
 **Closed Form Solution** - Ridge regression has a closed-form solution:
 
 $$
+
 \theta\_{\text{ridge}} = (X^{T}X + \alpha I)^{-1} X^{T}y
+
+
 $$
 
 where
@@ -248,12 +290,14 @@ where
 The penalty term
 
 $$
+
 \frac{\alpha}{2m}\theta^T\theta
+
+
 $$
 
 - Reduces Coefficients.
 - Reduces Variance.
-
 
 ## How to Use?
 
@@ -291,3 +335,6 @@ print(rr.weights,rr.bias) ##Print the coefficients and intercept
 print(rr.weights,rr.bias) ##Print the weights and bias
 y_pred = rr.predict(X_test) ## Get the predictions for test data
 ```
+
+$$
+$$
