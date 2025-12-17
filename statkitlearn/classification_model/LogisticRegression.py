@@ -94,17 +94,20 @@ class LogisticRegression:
         self : object
             Returns the fitted estimator.
         """
-        X_train, y_train = self.validate_fit(X_train, y_train)
+        X,y = self.validate_fit(X,y)
         self.bias = 0
         self.weights = np.zeros(X.shape[1])
         for i in range(self.epochs):
-            y_pred = self.sigmoid(np.dot(X,self.weights))
+            y_pred = self.sigmoid(np.dot(X,self.weights) + self.bias)
         
             # Calculating derivative wrt weights
-            dw = (1/X.shape[0]) * np.dot((y_pred - y), X)
+            dw = (1/X.shape[0]) * np.dot(X.T, (y_pred - y))
+            db = (1/X.shape[0]) * np.sum(y_pred - y)
 
-            ## Update weights
+            ## Update weights and bias
             self.weights -= self.lr*dw
+            self.bias -= self.lr*db
+            
         return self
     
     def predict(self,X):

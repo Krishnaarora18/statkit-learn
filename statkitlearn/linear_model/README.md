@@ -123,7 +123,7 @@ $$
 - **ElasticNet Reguralisation**- It is a mix of both L1 and L2 regularisation, it is less robust then L1 regularisation and more robust then L2 Regularisation.
 
 $$
-L_{new} = L_{old} +\lambda(\alpha|w| + (1-\alpha)w^2)
+L_{new} = L_{old} +\lambda(\alpha||w||_1 + (1-\alpha)||w||_2^2)
 $$
 
 **_Algorithm_**
@@ -210,7 +210,7 @@ $$
 
 $$
 
-J(\theta) = \frac{1}{2m}\sum\_{i=1}^{m} (X^{(i)}\theta - y^{(i)})^2
+J(\theta) = \frac{1}{2m}\sum_{i=1}^{m} (X^{(i)}\theta - y^{(i)})^2
 
 
 $$
