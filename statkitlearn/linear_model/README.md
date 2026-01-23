@@ -246,6 +246,8 @@ s_b \larr \beta_2 s_b + (1 - \beta_2)\nabla_b L \otimes \nabla_b L \newline
 \hat{s}_b \larr \frac{s_b}{1 - \beta_2^t} \newline
 w \larr w - \frac{\eta\hat{m}_w}{\sqrt{\hat{s}_w + \epsilon}} \newline
 b \larr b - \frac{\eta\hat{m}_b}{\sqrt{\hat{s}_b + \epsilon}} \newline
+
+
 $$
 
 ---
