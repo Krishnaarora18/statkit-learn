@@ -167,13 +167,6 @@ $$
 
 - Add the gradient of penalty term if choosen
 
-$$
-
-\frac{\partial L}{\partial w} = \frac{\partial L}{\partial w}+\nabla_{w}penalty
-
-
-$$
-
 - Calculate and save loss
 - **_Update weights and bias using optimizers_**:
 
