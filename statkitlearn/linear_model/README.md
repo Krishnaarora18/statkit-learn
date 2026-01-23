@@ -166,187 +166,117 @@ $$
 $$
 
 - Add the gradient of penalty term if choosen
-
+  $$
+  \frac{\partial L}{\partial w} = \frac{\partial L}{\partial w}+\nabla_{w}penalty
+  $$
 - Calculate and save loss
 - **_Update weights and bias using optimizers_**:
 
 if no optimizer is selected
 
 $$
-
 w \leftarrow w - \eta\cdot\frac{\partial L}{\partial w}
-
-
 $$
 
 $$
-
 b \leftarrow b - \eta\cdot\frac{\partial L}{\partial b}
-
-
 $$
 
 if momentum optimizer is selected
 
 $$
-
 m_w \leftarrow \beta m_w - \eta\nabla{_w}L
-
-
 $$
 
 $$
-
 m_b \leftarrow \beta m_b - \eta\nabla{_b}L
-
-
 $$
 
 $$
-
 w \leftarrow w +m_w
-
-
 $$
 
 $$
-
 b \leftarrow b + m_b
-
-
 $$
 
 If AdaGrad is selected
 
 $$
-
 s_w \leftarrow s_w +\nabla_w L \otimes \nabla_w L
-
-
 $$
 
 $$
-
 s_b \leftarrow s_b +\nabla_b L \otimes \nabla_b L
-
-
 $$
 
 $$
-
 w \leftarrow w - \frac{\eta\nabla_wL}{\sqrt{s_w + \epsilon}}
-
-
 $$
 
 $$
-
 b \leftarrow b - \frac{\eta\nabla_bL}{\sqrt{s_b + \epsilon}}
-
-
 $$
 
 if RMSProp is selected
 
 $$
-
 s_w \leftarrow \beta s_w + (1 - \beta)\nabla_w L \otimes \nabla_w L
-
-
 $$
 
 $$
-
 s_b \leftarrow \beta s_b + (1 - \beta)\nabla_b L \otimes \nabla_b L
-
-
 $$
 
 $$
-
 w \leftarrow w - \frac{\eta\nabla_wL}{\sqrt{s_w + \epsilon}}
-
-
 $$
 
 $$
-
 b \leftarrow b - \frac{\eta\nabla_bL}{\sqrt{s_b + \epsilon}}
-
-
 $$
 
 if Adam is selected
 
 $$
-
 m_w \leftarrow \beta_1 m_w - (1-\beta_1)\nabla{_w}L
-
-
 $$
 
 $$
-
 m_b \leftarrow \beta_1 m_b - (1-\beta_1)\nabla{_b}L
-
-
 $$
 
 $$
-
 s_w \leftarrow \beta_2 s_w + (1 - \beta_2)\nabla_w L \otimes \nabla_w
-
-
 $$
 
 $$
-
 s_b \leftarrow \beta_2 s_b + (1 - \beta_2)
 \nabla_b L \otimes \nabla_b L
-
-
 $$
 
 $$
-
 \hat{m}_w \leftarrow \frac{m_w}{1 - \beta_1^t}
-
-
 $$
 
 $$
-
 \hat{m}_b \leftarrow \frac{m_b}{1 - \beta_1^t}
-
-
 $$
 
 $$
-
 \hat{s}_w \leftarrow \frac{s_w}{1 - \beta_2^t}
-
-
 $$
 
 $$
-
 \hat{s}_b \leftarrow \frac{s_b}{1 - \beta_2^t}
-
-
 $$
 
 $$
-
 w \leftarrow w - \frac{\eta\hat{m}_w}{\sqrt{\hat{s}_w + \epsilon}}
-
-
 $$
 
 $$
-
 b \leftarrow b - \frac{\eta\hat{m}_b}{\sqrt{\hat{s}_b + \epsilon}}
-
-
 $$
 
 ---
