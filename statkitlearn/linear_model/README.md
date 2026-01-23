@@ -181,14 +181,14 @@ if no optimizer is selected
 
 $$
 
-w \larr w - \eta\cdot\frac{\partial L}{\partial w}
+w \leftarrow w - \eta\cdot\frac{\partial L}{\partial w}
 
 
 $$
 
 $$
 
-b \larr b - \eta\cdot\frac{\partial L}{\partial b}
+b \leftarrow b - \eta\cdot\frac{\partial L}{\partial b}
 
 
 $$
@@ -197,13 +197,28 @@ if momentum optimizer is selected
 
 $$
 
-m_w \larr \beta m_w - \eta\nabla{_w}L \newline
+m_w \leftarrow \beta m_w - \eta\nabla{_w}L
 
-m_b \larr \beta m_b - \eta\nabla{_b}L \newline
 
-w \larr w +m_w \newline
+$$
 
-b \larr b + m_b
+$$
+
+m_b \leftarrow \beta m_b - \eta\nabla{_b}L
+
+
+$$
+
+$$
+
+w \leftarrow w +m_w
+
+
+$$
+
+$$
+
+b \leftarrow b + m_b
 
 
 $$
@@ -212,10 +227,28 @@ If AdaGrad is selected
 
 $$
 
-s_w \larr s_w +\nabla_w L \otimes \nabla_w L \newline
-s_b \larr s_b +\nabla_b L \otimes \nabla_b L \newline
-w \larr w - \frac{\eta\nabla_wL}{\sqrt{s_w + \epsilon}} \newline
-b \larr b - \frac{\eta\nabla_bL}{\sqrt{s_b + \epsilon}}
+s_w \leftarrow s_w +\nabla_w L \otimes \nabla_w L
+
+
+$$
+
+$$
+
+s_b \leftarrow s_b +\nabla_b L \otimes \nabla_b L
+
+
+$$
+
+$$
+
+w \leftarrow w - \frac{\eta\nabla_wL}{\sqrt{s_w + \epsilon}}
+
+
+$$
+
+$$
+
+b \leftarrow b - \frac{\eta\nabla_bL}{\sqrt{s_b + \epsilon}}
 
 
 $$
@@ -224,10 +257,28 @@ if RMSProp is selected
 
 $$
 
-s_w \larr \beta s_w + (1 - \beta)\nabla_w L \otimes \nabla_w L \newline
-s_b \larr \beta s_b + (1 - \beta)\nabla_b L \otimes \nabla_b L \newline
-w \larr w - \frac{\eta\nabla_wL}{\sqrt{s_w + \epsilon}} \newline
-b \larr b - \frac{\eta\nabla_bL}{\sqrt{s_b + \epsilon}}
+s_w \leftarrow \beta s_w + (1 - \beta)\nabla_w L \otimes \nabla_w L
+
+
+$$
+
+$$
+
+s_b \leftarrow \beta s_b + (1 - \beta)\nabla_b L \otimes \nabla_b L
+
+
+$$
+
+$$
+
+w \leftarrow w - \frac{\eta\nabla_wL}{\sqrt{s_w + \epsilon}}
+
+
+$$
+
+$$
+
+b \leftarrow b - \frac{\eta\nabla_bL}{\sqrt{s_b + \epsilon}}
 
 
 $$
@@ -236,16 +287,71 @@ if Adam is selected
 
 $$
 
-m_w \larr \beta_1 m_w - (1-\beta_1)\nabla{_w}L \newline
-m_b \larr \beta_1 m_b - (1-\beta_1)\nabla{_b}L \newline
-s_w \larr \beta_2 s_w + (1 - \beta_2)\nabla_w L \otimes \nabla_w L \newline
-s_b \larr \beta_2 s_b + (1 - \beta_2)\nabla_b L \otimes \nabla_b L \newline
-\hat{m}_w \larr \frac{m_w}{1 - \beta_1^t} \newline
-\hat{m}_b \larr \frac{m_b}{1 - \beta_1^t} \newline
-\hat{s}_w \larr \frac{s_w}{1 - \beta_2^t} \newline
-\hat{s}_b \larr \frac{s_b}{1 - \beta_2^t} \newline
-w \larr w - \frac{\eta\hat{m}_w}{\sqrt{\hat{s}_w + \epsilon}} \newline
-b \larr b - \frac{\eta\hat{m}_b}{\sqrt{\hat{s}_b + \epsilon}} \newline
+m_w \leftarrow \beta_1 m_w - (1-\beta_1)\nabla{_w}L
+
+
+$$
+
+$$
+
+m_b \leftarrow \beta_1 m_b - (1-\beta_1)\nabla{_b}L
+
+
+$$
+
+$$
+
+s_w \leftarrow \beta_2 s_w + (1 - \beta_2)\nabla_w L \otimes \nabla_w
+
+
+$$
+
+$$
+
+s_b \leftarrow \beta_2 s_b + (1 - \beta_2)
+\nabla_b L \otimes \nabla_b L
+
+
+$$
+
+$$
+
+\hat{m}_w \leftarrow \frac{m_w}{1 - \beta_1^t}
+
+
+$$
+
+$$
+
+\hat{m}_b \leftarrow \frac{m_b}{1 - \beta_1^t}
+
+
+$$
+
+$$
+
+\hat{s}_w \leftarrow \frac{s_w}{1 - \beta_2^t}
+
+
+$$
+
+$$
+
+\hat{s}_b \leftarrow \frac{s_b}{1 - \beta_2^t}
+
+
+$$
+
+$$
+
+w \leftarrow w - \frac{\eta\hat{m}_w}{\sqrt{\hat{s}_w + \epsilon}}
+
+
+$$
+
+$$
+
+b \leftarrow b - \frac{\eta\hat{m}_b}{\sqrt{\hat{s}_b + \epsilon}}
 
 
 $$
@@ -395,6 +501,3 @@ print(rr.weights,rr.bias) ##Print the coefficients and intercept
 print(rr.weights,rr.bias) ##Print the weights and bias
 y_pred = rr.predict(X_test) ## Get the predictions for test data
 ```
-
-$$
-$$
