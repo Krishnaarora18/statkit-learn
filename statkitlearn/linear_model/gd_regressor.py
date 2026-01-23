@@ -22,6 +22,20 @@ class GDRegressor:
             - log_cosh (Log Cosh Loss)
         default="mse"  
 
+    optimizer : str, to select optimizer
+        Currently included Optimizers
+            - adamax (AdaMax)
+            - Adam (Adam)
+            - rmsprop (RMSProp)
+            - momentum (Momentum)
+        default = None (No optimizer is used)
+
+    momentum : float, to adjust the value of beta in optimizers
+        default = 0.9
+
+    scaling_decay = float, used to adjust the value of scaling decay in adam optimizer
+        default = 0.999
+                    
     delta : float, default=1.5
         Used to compute Pseudo Huber Loss
 
@@ -56,7 +70,10 @@ class GDRegressor:
     - Intended for educational use; not as efficient as closed-form.
     """
     
-    def __init__(self, learning_rate=0.1, epochs=1000,loss = "mse",delta = 1.5,penalty = None,alpha = 0.1,l1_ratio=0.5):
+    def __init__(self, learning_rate=0.1, epochs=1000,
+                 loss = "mse",delta = 1.5,penalty = None,
+                 alpha = 0.1,l1_ratio=0.5, momentum = 0.9,
+                 epsilon = 1e-8, optimizer = None, scaling_decay = 0.999):
         self.epochs = epochs
         self.lr = learning_rate
         self.penalty = penalty
@@ -66,15 +83,29 @@ class GDRegressor:
         self.l1_ratio = l1_ratio
         self.bias = None
         self.loss = loss
+        self.mw = 0
+        self.mb = 0
+        self.sw = 0
+        self.sb = 0
+        self.e = epsilon
+        self.beta = momentum
+        self.beta2 = scaling_decay
+        self.mw_hat = 0
+        self.mb_hat = 0
+        self.sw_hat = 0 
+        self.sb_hat = 0
         self.loss_history_ = [] 
         self.tol = 1e-4 
         self.n_iter_no_change = 10 
+        self.optimizer = optimizer
 
 
         if self.penalty not in {None, "l1", "l2", "elasticnet"}:
             raise ValueError("Unknown Penalty")
         if self.loss not in {"mse","log_cosh","pseudo_huber"}:
             raise ValueError("Unknown Loss Function")
+        if self.optimizer not in ["rmsprop","adagrad","adam","momentum"]:
+            raise ValueError("Unknown Optimizer")
 
     def validate_X(self, X):
         X = np.asarray(X)
@@ -128,7 +159,6 @@ class GDRegressor:
             return error/np.sqrt(1 + (error/self.delta)**2)
         elif self.loss == "log_cosh":
             return np.tanh(error)
-
         
     def mse(self,error):
         """
@@ -175,6 +205,9 @@ class GDRegressor:
 
         self.bias = 0
         self.weights = np.zeros(X_train.shape[1])
+
+        self.mw = self.mb = self.sw = self.sb = 0
+
         
         for i in range(self.epochs):
             y_pred = np.dot(X_train, self.weights) + self.bias ## Calculate predicted value of y
@@ -184,8 +217,8 @@ class GDRegressor:
             dw = - np.dot(X_train.T, dy_pred)/X_train.shape[0] ## Compute Gradient of Loss function wrt weights
             db = - np.mean(dy_pred)
 
-            # Skip bias term
             w = self.weights.copy()
+
 
             ## Apply Penalty
             if self.penalty == None:
@@ -216,11 +249,49 @@ class GDRegressor:
                     print(f"Converged at epoch {i}")
                     break
 
-            self.weights -= self.lr * dw ## Update weights
-            self.bias -= self.lr * db
+            ## Update weights 
+            if self.optimizer == None:
+                self.weights -= self.lr*dw
+                self.bias -= self.lr*db
 
+            elif self.optimizer == "momentum":
+                self.mw = self.beta*self.mw - self.lr*dw
+                self.mb = self.beta*self.mb - self.lr*db
 
-        print(self.bias,self.weights)
+                self.weights += self.mw
+                self.bias += self.mb
+
+            elif self.optimizer == "adagrad":
+                self.sw += dw**2 
+                self.sb += db**2
+                
+                self.weights -= self.lr * dw/(np.sqrt(self.sw + self.e))
+                self.bias -= self.lr * db/(np.sqrt(self.sb + self.e))
+
+            elif self.optimizer == "rmsprop":
+                self.sw  = self.beta*self.sw + (1 - self.beta) * dw ** 2
+                self.sb = self.beta * self.sb + (1 - self.beta) * db ** 2
+
+                self.weights -= self.lr * dw/(np.sqrt(self.sw + self.e))
+                self.bias -= self.lr * db/(np.sqrt(self.sb + self.e))
+
+            elif self.optimizer == "adam":
+                self.mw = self.beta*self.mw + (1 - self.beta) * dw
+                self.mb = self.beta*self.mb + (1 - self.beta) * db
+
+                self.sw = self.beta2*self.sw + (1 - self.beta2) * dw ** 2
+                self.sb = self.beta2*self.sb + (1 - self.beta2) * db ** 2
+
+                t = i + 1
+
+                self.mw_hat = self.mw/(1 - self.beta ** t)
+                self.mb_hat = self.mb/(1 - self.beta ** t)
+
+                self.sw_hat = self.sw/(1 - self.beta2 ** t)
+                self.sb_hat = self.sb/(1 - self.beta2 ** t)
+
+                self.weights -= self.lr * self.mw_hat/np.sqrt(self.sw_hat + self.e)
+                self.bias -= self.lr * self.mb_hat/np.sqrt(self.sb_hat + self.e)
 
         return self
 
